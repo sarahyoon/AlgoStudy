@@ -37,44 +37,89 @@ public class picnic {
             return 1;
         }
 
-        List<List> friend = new ArrayList<>();
-        List<Integer> sum = new ArrayList<>();
-        //make pair
-        String[] arr = friends.split(" ");
-        for(int i=0;i<arr.length-1; i+=2){
-            int f = Integer.parseInt(arr[i]);
-            int f_p = Integer.parseInt(arr[i+1]);
+        int arr[][] = setnewArray(friends, num_of_std);
 
-            List<Integer> pair = new ArrayList<>();
-            if(f<f_p){
-                pair.add(f);
-                pair.add(f_p);
+        for(int i=0;i<arr.length;i++){
+            for(int j=0;j<arr[0].length;j++){
+                System.out.print(arr[i][j]);
             }
-            else{
-                pair.add(f_p);
-                pair.add(f);
-            }
-            friend.add(pair);
-            sum.add(f+f_p);
-
+            System.out.println();
         }
 
         int answer = 0;
-        int tot = (num_of_std-1 * num_of_std)/2;
 
-        //1. sum list에 있는 숫자들 중에 team의 갯수만큼 뽑아 tot를 만들 수 있는 모든 경우의 수를 구하기
-        //2. 만들수 있는 경우의 수를 구할 때, 각각의 인덱스에 해당하는 friend의 페어들을 확인하여 중복되는 숫자가 없는지 확인
-        //3. 중복되는 숫자가 없으면 answer++
+        for(int i=0;i<arr.length;i++){
+            for(int j= 0;j<arr[0].length;j++){
 
+                if(arr[i][j] == 1){
+                    int[][] copy = setnewArray(friends, num_of_std);
+                    System.out.println(i+","+j);
 
+                    copy[i][j] = -1;
 
+                    answer+= check(copy,i, j, team-1);
+                    System.out.println("answer" + answer);
+
+                }
+            }
+        }
+        System.out.println(answer);
         return 0;
     }
 
-    public static void find(int team, List friend, List sum, int answer, int tot, int temp){
+    public static int[][] setnewArray(String friends, int num_of_std){
 
+        int[][] arr = new int[num_of_std][num_of_std];
+        String pairs[] = friends.split(" ");
+        for(int i=0;i<pairs.length-1;i+=2){
+            int first = Integer.parseInt(pairs[i]);
+            int second = Integer.parseInt(pairs[i+1]);
 
+            arr[first][second] = 1;
+        }
 
-
+        return arr;
     }
+
+    public static int[][] setMinus(int[][] copy, int x, int y){
+        for(int i=0;i<copy.length;i++){
+            copy[x][i] = -1;
+        }
+        for(int i=0;i<copy.length;i++){
+            copy[y][i] = -1;
+        }
+        for(int i = 0;i<copy.length;i++){
+            copy[i][x] = -1;
+        }
+        for(int i=0;i<copy.length;i++){
+            copy[i][y] = -1;
+        }
+        return copy;
+    }
+
+    public static int check(int[][] copy, int x, int y, int team){
+        int count = 0;
+        copy = setMinus(copy,x, y);
+
+        for(int i=0;i<copy.length;i++){
+            for(int j=0;j<copy.length;j++){
+
+                if(team<=0){
+                    count++;
+                    break;
+                }
+                else{
+                    if(copy[i][j] == 1){
+                        team--;
+                        System.out.println("pairs with: " + i+","+j);
+                        setMinus(copy, i, j);
+                    }
+                }
+
+            }
+        }
+        return count;
+    }
+
+
 }
