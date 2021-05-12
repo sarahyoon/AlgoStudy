@@ -1,7 +1,6 @@
 package BruteForce;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class picnic {
@@ -11,22 +10,20 @@ public class picnic {
         Scanner scan = new Scanner(System.in);
 
         int testCase = scan.nextInt();
-        int num_of_std =0;
-        int f_pair = 0;
         String friends = "";
+        String answer = "";
 
         for(int i=0;i<testCase;i++){
+
+            int num_of_std = scan.nextInt();
+            int f_pair = scan.nextInt();
+
             scan.nextLine();
-
-            String cases = scan.nextLine();
-
-            num_of_std = Integer.parseInt(cases.split(" ")[0]);
-            f_pair = Integer.parseInt(cases.split(" ")[1]);
             friends = scan.nextLine();
 
-            solve(num_of_std, f_pair, friends);
+            answer += solve(num_of_std, f_pair, friends) + "\n" ;
         }
-
+        System.out.println(answer);
     }
 
     public static int solve(int num_of_std, int f_pair, String friends){
@@ -38,12 +35,9 @@ public class picnic {
         }
 
         int arr[][] = setnewArray(friends, num_of_std);
-
-        for(int i=0;i<arr.length;i++){
-            for(int j=0;j<arr[0].length;j++){
-                System.out.print(arr[i][j]);
-            }
-            System.out.println();
+        Boolean[][] visited = new Boolean[num_of_std+1][num_of_std+1];
+        for(Boolean a[]: visited){
+            Arrays.fill(a, false);
         }
 
         int answer = 0;
@@ -53,23 +47,21 @@ public class picnic {
 
                 if(arr[i][j] == 1){
                     int[][] copy = setnewArray(friends, num_of_std);
-                    System.out.println(i+","+j);
 
                     copy[i][j] = -1;
-
-                    answer+= check(copy,i, j, team-1);
-                    System.out.println("answer" + answer);
+                    answer+= check(copy,i, j, team-1, visited);
 
                 }
             }
         }
-        System.out.println(answer);
-        return 0;
+
+        return answer;
     }
 
     public static int[][] setnewArray(String friends, int num_of_std){
 
-        int[][] arr = new int[num_of_std][num_of_std];
+        int[][] arr = new int[num_of_std+1][num_of_std+1];
+
         String pairs[] = friends.split(" ");
         for(int i=0;i<pairs.length-1;i+=2){
             int first = Integer.parseInt(pairs[i]);
@@ -97,27 +89,38 @@ public class picnic {
         return copy;
     }
 
-    public static int check(int[][] copy, int x, int y, int team){
+    public static int check(int[][] copy, int x, int y, int team, Boolean[][] visited){
         int count = 0;
+        int check = 0;
         copy = setMinus(copy,x, y);
+
+        if(visited[x][y] == false){
+            visited[x][y] = true;
+            check ++;
+        }
 
         for(int i=0;i<copy.length;i++){
             for(int j=0;j<copy.length;j++){
 
-                if(team<=0){
+                if(team<=0 && check >0){
                     count++;
+                    check =0;
                     break;
                 }
                 else{
+
                     if(copy[i][j] == 1){
+                        if(visited[i][j] == false){
+                            check++;
+                            visited[i][j] = true;
+                        }
                         team--;
-                        System.out.println("pairs with: " + i+","+j);
                         setMinus(copy, i, j);
                     }
                 }
-
             }
         }
+
         return count;
     }
 
