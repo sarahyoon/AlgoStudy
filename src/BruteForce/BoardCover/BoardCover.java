@@ -1,4 +1,4 @@
-package BruteForce;
+package BruteForce.BoardCover;
 
 import java.util.Scanner;
 

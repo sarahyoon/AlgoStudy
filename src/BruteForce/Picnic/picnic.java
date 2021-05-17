@@ -1,4 +1,4 @@
-package BruteForce;
+package BruteForce.Picnic;
 
 import java.util.Arrays;
 import java.util.Scanner;
