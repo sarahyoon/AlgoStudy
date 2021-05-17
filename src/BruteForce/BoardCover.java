@@ -4,96 +4,99 @@ import java.util.Scanner;
 
 public class BoardCover {
 
-    public static int coverType[][][] = {
-            { {0,0}, {1,0}, {0,1} }, { {0,0}, {0,1}, {1,1} }, { {0,0}, {1,0}, {1,1} }, { {0,0}, {1,0}, {1,-1} } };
 
+    private static int[][][] coverType = {
+            {{0, 0}, {1, 0}, {0, 1}}, //┌
+            {{0, 0}, {0, 1}, {1, 1}}, // ┐
+            {{0, 0}, {1, 0}, {1, 1}}, //└
+            {{0, 0}, {1, 0}, {1, -1}} // ┘
+    };
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int testCase = sc.nextInt();
 
-        Scanner scan = new Scanner(System.in);
-
-        int testCase = scan.nextInt();
         String answer = "";
 
-        for(int i=0;i<testCase;i++){
+       for(int t=0;t<testCase;t++){
 
-            int h = scan.nextInt();
-            int w = scan.nextInt();
-
+            int height = sc.nextInt();
+            int width = sc.nextInt();
+            int[][] board = new int[height][width];
             int white = 0;
-            int[][] board = new int[h][w];
 
-            for(int k=0;k<h;k++){
-                String line = scan.next();
+            sc.nextLine();
 
-                for(int j = 0;j<w;j++){
-                    if(line.charAt(j) == '#'){
-                        board[k][j] = 1;
-                    }
-                    else{
-                        board[k][j] = 0;
+            for(int i=0;i<height;i++){
+                String tmp = sc.nextLine();
+                for(int j = 0;j<width;j++){
+                    if(tmp.charAt(j) == '#'){
+                        board[i][j] = 1;
+                    }else{
+                        board[i][j] = 0;
                         white++;
                     }
                 }
             }
 
-            if(white%3 != 0){
+            if(white%3 !=0){
                 answer += 0 + "\n";
             }
             else{
-                answer += solve(board) + "\n" ;
+                answer += cover(board) + "\n";
             }
         }
         System.out.println(answer);
     }
 
-    public static int solve(int[][] board){
-        int count = 0;
-        int x = -1;
-        int y = -1;
 
-        for(int i=0;i<board.length;i++){
-            for(int j=0;j<board[0].length;j++){
-                if(board[i][j] == 0){
-                    x = i;
-                    y = j;
+    private static boolean set(int[][] board, int y, int x, int type, int stack) {
+
+        boolean ok = true;
+
+        for (int i = 0; i < 3; i++) {
+            int ny = y + coverType[type][i][0];
+            int nx = x + coverType[type][i][1];
+
+            if (ny < 0 || ny >= board.length || nx < 0 || nx >= board[0].length) {
+                ok = false;
+
+            } else if ((board[ny][nx] += stack) > 1) {
+                ok = false;
+            }
+        }
+        return ok;
+    }
+
+    private static int cover(int[][] board) {
+
+        int y = -1, x = -1;
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 0) {
+                    y = i;
+                    x = j;
                     break;
                 }
             }
-            if(y != -1){
+            if (y != -1) {
                 break;
             }
         }
 
-        if(y == -1){
+        if (y == -1) {
             return 1;
         }
 
-        for(int i = 0;i<4;i++){
-            if(setBoard(x, y, i, 1, board)){
-                count+= solve(board);
-            }
+        int result = 0;
 
-            setBoard(x, y, i, -1, board);
+        for (int type = 0; type < 4; type++) {
+            if (set(board, y, x, type, 1)) {
+                result += cover(board);
+            }
+            set(board, y, x, type, -1);
         }
-        return count;
-    }
-
-    public static boolean setBoard(int x, int y, int type, int offset, int board[][]){
-        boolean check = true;
-
-        for(int i=0;i<3;i++){
-
-            int dy = y + coverType[type][i][0];
-            int dx = x + coverType[type][i][1];
-
-            if(dx<0 ||dx >=board.length|| dy <0 || dy>=board[0].length ){
-                check = false;
-            }
-            else if((board[dx][dy]+=offset)>1){
-                check = false;
-            }
-        }
-        return check;
+        return result;
     }
 }
