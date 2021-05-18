@@ -40,6 +40,7 @@ public class Boggle {
                 for (int h = 0; h < 5; h++) {
                     for (int w = 0; w < 5; w++) {
                         if (hasword(h, w, board, words[c])){
+                            System.out.println(words[c]);
                             isWord = true;
                             break;
                         }
@@ -66,12 +67,11 @@ public class Boggle {
 
     public static Boolean hasword(int y, int x, String[][] board, String word){
 
-
         if(x<0 || y<0 || x >= 5 || y >= 5){
             return false;
         }
 
-        if(board[y][x] != String.valueOf(word.charAt(0))){
+        if(!board[y][x].equals(String.valueOf(word.charAt(0)))){
             return false;
         }
 
@@ -82,7 +82,6 @@ public class Boggle {
         for(int i=0;i<8;i++){
             int next_y = y + dy[i];
             int next_x = x + dx[i];
-
             if(hasword(next_y, next_x, board, word.substring(1))){
                 return true;
             }
