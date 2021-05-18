@@ -4,8 +4,9 @@ import java.util.Scanner;
 
 public class Boggle {
 
-    static int[] dx = {1, -1, 0, 0, -1, 1, -1, 1};
-    static int[] dy = {0, 0, 1, -1, -1, 1, 1, -1};
+    static final int[] dx = { -1, -1, -1, 1, 1, 1, 0, 0 };
+    static final int[] dy = { -1, 0, 1, -1, 0, 1, -1, 1 };
+
     static String[] answer;
 
     public static void main(String[] args){
@@ -33,61 +34,48 @@ public class Boggle {
 
             answer = new String[numOfWords];
 
-            for(int w = 0;w<numOfWords;w++){
-                answer[w] = words[w] + " " + search(words[w], board);
-            }
+            for(int c = 0;c<numOfWords;c++) {
+                boolean isWord = false;
 
+                for (int h = 0; h < 5; h++) {
+                    for (int w = 0; w < 5; w++) {
+                        if (hasword(h, w, board, words[c])){
+                            isWord = true;
+                            break;
+                        }
+                    }
+                    if(isWord){
+                        break;
+                    }
+                }
+                if (isWord){
+                    answer[c] = words[c] + " "+ "YES";
+                }
+                else{
+                    answer[c] = words[c] + " "+ "NO";
+                }
+            }
         }
 
         for(int i=0;i<answer.length;i++){
             System.out.println(answer[i]);
         }
-
-
-    }
-
-    public static String search(String word, String[][] board){
-
-        String yesorno = "";
-        Boolean find = true;
-
-
-            for(int h=0;h<board.length;h++) {
-                for (int w = 0; w < board[0].length; w++) {
-                    if (hasword(h, w, board, word)) {
-                        find = true;
-                        break;
-                    }
-                }
-                if (find) {
-                    break;
-                }
-            }
-
-        if(find){
-            yesorno = "YES";
-        }
-        else{
-            yesorno = "NO";
-        }
-
-        return yesorno;
-
     }
 
 
-    public static Boolean hasword(int y, int x, String[][] board, String cha){
+
+    public static Boolean hasword(int y, int x, String[][] board, String word){
 
 
         if(x<0 || y<0 || x >= 5 || y >= 5){
             return false;
         }
 
-        if(board[y][x] != String.valueOf(cha.charAt(0))){
+        if(board[y][x] != String.valueOf(word.charAt(0))){
             return false;
         }
 
-        if(cha.length() == 1){
+        if(word.length() == 1){
             return true;
         }
 
@@ -95,7 +83,7 @@ public class Boggle {
             int next_y = y + dy[i];
             int next_x = x + dx[i];
 
-            if(hasword(next_y, next_x, board, cha.substring(1))){
+            if(hasword(next_y, next_x, board, word.substring(1))){
                 return true;
             }
         }
