@@ -1,75 +1,81 @@
 package BruteForce;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class Boggle {
 
     static final int[] dx = { -1, -1, -1, 1, 1, 1, 0, 0 };
     static final int[] dy = { -1, 0, 1, -1, 0, 1, -1, 1 };
 
-    static String[] answer;
+    static int dp[][][];
+    public static void main(String[] args) throws IOException {
 
-    public static void main(String[] args){
-        Scanner scan = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String answer = "";
+        int testCase = Integer.parseInt(br.readLine());
 
-        int testCase = scan.nextInt();
-        scan.nextLine();
         for(int i=0;i<testCase;i++){
 
             String [][] board = new String[5][5];
 
             for(int h=0;h<5;h++){
-                String lines = scan.nextLine();
+                String lines = br.readLine();
                 for(int w=0;w<5;w++){
                     board[h][w] = String.valueOf(lines.charAt(w));
                 }
             }
-
-            int numOfWords = scan.nextInt();
+            int numOfWords = Integer.parseInt(br.readLine());
 
             String [] words = new String[numOfWords];
             for(int n=0;n<numOfWords;n++){
-                words[n] = scan.next();
+                words[n] = br.readLine();
             }
-
-            answer = new String[numOfWords];
 
             for(int c = 0;c<numOfWords;c++) {
                 boolean isWord = false;
 
+                dp = new int[5][5][10];
+                for(int[][] a: dp){
+                    for(int[] b: a){
+                        Arrays.fill(b, 0);
+                    }
+                }
+
                 for (int h = 0; h < 5; h++) {
                     for (int w = 0; w < 5; w++) {
-                        if (hasword(h, w, board, words[c])){
-                            System.out.println(words[c]);
-                            isWord = true;
-                            break;
-                        }
-                    }
-                    if(isWord){
-                        break;
+                            if (hasword(h, w, board, words[c], 0)){
+                                isWord = true;
+                                break;
+                            }
                     }
                 }
                 if (isWord){
-                    answer[c] = words[c] + " "+ "YES";
+                    System.out.println(words[c] + " "+ "YES");
                 }
                 else{
-                    answer[c] = words[c] + " "+ "NO";
+                    System.out.println(words[c] + " "+ "NO");
                 }
             }
         }
 
-        for(int i=0;i<answer.length;i++){
-            System.out.println(answer[i]);
-        }
     }
 
 
 
-    public static Boolean hasword(int y, int x, String[][] board, String word){
+    public static Boolean hasword(int y, int x, String[][] board, String word, int idx){
 
-        if(x<0 || y<0 || x >= 5 || y >= 5){
+
+        if(x<0 || y<0 || x >= 5 || y >= 5) {
             return false;
         }
+
+        if(dp[y][x][idx] ==1){
+            return false;
+        }
+        dp[y][x][idx] = 1;
 
         if(!board[y][x].equals(String.valueOf(word.charAt(0)))){
             return false;
@@ -82,10 +88,12 @@ public class Boggle {
         for(int i=0;i<8;i++){
             int next_y = y + dy[i];
             int next_x = x + dx[i];
-            if(hasword(next_y, next_x, board, word.substring(1))){
+
+            if(hasword(next_y, next_x, board, word.substring(1), idx+1)){
                 return true;
             }
         }
+
         return false;
     }
 
