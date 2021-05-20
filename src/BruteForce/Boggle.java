@@ -11,10 +11,11 @@ public class Boggle {
     static final int[] dy = { -1, 0, 1, -1, 0, 1, -1, 1 };
 
     static int dp[][][];
+    static Boolean visited[][];
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String answer = "";
         int testCase = Integer.parseInt(br.readLine());
 
         for(int i=0;i<testCase;i++){
@@ -37,16 +38,20 @@ public class Boggle {
             for(int c = 0;c<numOfWords;c++) {
                 boolean isWord = false;
 
-                dp = new int[5][5][10];
-                for(int[][] a: dp){
-                    for(int[] b: a){
-                        Arrays.fill(b, 0);
-                    }
-                }
+//                dp = new int[5][5][10];
+//                for(int[][] a: dp){
+//                    for(int[] b: a){
+//                        Arrays.fill(b, 0);
+//                    }
+//                }
 
+                visited = new Boolean[5][5];
+                for(Boolean[] a: visited){
+                    Arrays.fill(a, false);
+                }
                 for (int h = 0; h < 5; h++) {
                     for (int w = 0; w < 5; w++) {
-                            if (hasword(h, w, board, words[c], 0)){
+                            if (hasword(h, w, board, words[c], 0, visited)){
                                 isWord = true;
                                 break;
                             }
@@ -65,17 +70,23 @@ public class Boggle {
 
 
 
-    public static Boolean hasword(int y, int x, String[][] board, String word, int idx){
+    public static Boolean hasword(int y, int x, String[][] board, String word, int idx, Boolean[][] visited){
 
 
         if(x<0 || y<0 || x >= 5 || y >= 5) {
             return false;
         }
 
-        if(dp[y][x][idx] ==1){
+
+        if(visited[y][x] == false){
             return false;
         }
-        dp[y][x][idx] = 1;
+        visited[y][x] = true;
+
+//        if(dp[y][x][idx] ==1){
+//            return false;
+//        }
+//        dp[y][x][idx] = 1;
 
         if(!board[y][x].equals(String.valueOf(word.charAt(0)))){
             return false;
@@ -89,7 +100,7 @@ public class Boggle {
             int next_y = y + dy[i];
             int next_x = x + dx[i];
 
-            if(hasword(next_y, next_x, board, word.substring(1), idx+1)){
+            if(hasword(next_y, next_x, board, word.substring(1), idx+1, visited)){
                 return true;
             }
         }

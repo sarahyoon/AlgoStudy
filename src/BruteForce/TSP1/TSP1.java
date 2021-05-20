@@ -1,9 +1,9 @@
-package BruteForce;
+package BruteForce.TSP1;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class TP1 {
+public class TSP1 {
 
     public static double result;
 
