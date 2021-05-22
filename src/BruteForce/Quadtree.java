@@ -6,40 +6,41 @@ public class Quadtree {
 
     public static String ans;
 
+    public static int idx;
+
     public static void main(String[] args){
 
         Scanner scan = new Scanner(System.in);
 
         int testCase = scan.nextInt();
         scan.nextLine();
+        ans = "";
 
         for(int i=0;i<testCase;i++){
-            ans = "";
             String pixel = scan.nextLine();
-
-            ans = zip(pixel, 0);
-            System.out.println(ans);
+            idx = 0;
+            ans += zip(pixel)+"\n";
         }
+        System.out.println(ans);
+
     }
 
-    public static String zip(String pix, int idx){
+    public static String zip(String pix){
 
 
-        if(idx >=pix.length()-1){
-            return pix.charAt(idx)+"";
+        if(pix.charAt(idx) != 'x'){
+            return pix.charAt(idx++)+"";
         }
-        if(pix.charAt(idx) == 'x' ){
+        idx++;
+        String first = zip(pix);
 
-            if(idx+4>pix.length()-1){
-                zip(pix, idx+3);
-                zip(pix, idx+4);
-                zip(pix, idx+1);
-                zip(pix, idx+2);
-                idx++;
-            }
+        String second = zip(pix);
 
-        }
+        String third = zip(pix);
 
-        return "x"+pix.charAt(idx+3)+pix.charAt(idx+4)+pix.charAt(idx+1)+pix.charAt(idx+2);
+        String fourth = zip(pix);
+
+        return 'x'+third + fourth + first + second;
+
     }
 }
