@@ -4,8 +4,7 @@ import java.util.Scanner;
 
 public class Quadtree {
 
-    public static String ans;
-
+    public static String str;
     public static int idx;
 
     public static void main(String[] args){
@@ -14,33 +13,31 @@ public class Quadtree {
 
         int testCase = scan.nextInt();
         scan.nextLine();
-        ans = "";
 
         for(int i=0;i<testCase;i++){
-            String pixel = scan.nextLine();
+            str = scan.nextLine();
             idx = 0;
-            ans += zip(pixel)+"\n";
+            System.out.println(zip());
         }
-        System.out.println(ans);
 
     }
 
-    public static String zip(String pix){
+    public static String zip(){
 
 
-        if(pix.charAt(idx) != 'x'){
-            return pix.charAt(idx++)+"";
+        if(str.charAt(idx) != 'x'){
+            return str.charAt(idx++)+"";
         }
+
         idx++;
-        String first = zip(pix);
+        String first = zip();
 
-        String second = zip(pix);
+        String second = zip();
 
-        String third = zip(pix);
+        String third = zip();
 
-        String fourth = zip(pix);
+        String fourth = zip();
 
         return 'x'+third + fourth + first + second;
-
     }
 }
