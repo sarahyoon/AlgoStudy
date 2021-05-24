@@ -36,11 +36,17 @@ public class TSP1 {
         }
     }
 
-    public static void search(int city, int count, double cost, Double[][] paths, Boolean[] visited){
+    //city : 현재 도시
+    //count: 지금까지 방문한 도시 count
+    //cost: 비용
+    //paths: 도시간 거리
+    //visited: 방문 여부
+    //result: 현재 거리비용
+    public static void search(int city, int count, double cost, Double[][] paths, Boolean[] visited) {
 
         if(count == paths.length-1){
-            result = Math.min(result, cost);
-            return ;
+            result = Math.min(cost, result);
+            return;
         }
 
         visited[city] = true;
@@ -50,7 +56,7 @@ public class TSP1 {
                 search(i, count+1, cost+paths[city][i], paths, visited);
             }
         }
-        visited[city] = false;
 
+        visited[city] = false;
     }
 }
