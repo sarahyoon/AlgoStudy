@@ -1,4 +1,4 @@
-package BruteForce;
+package BruteForce.LIS;
 
 import java.util.Scanner;
 
