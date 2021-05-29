@@ -14,11 +14,12 @@ public class PI {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int testCase = Integer.parseInt(br.readLine());
+        int testCase = Integer.parseInt(br.readLine().trim());
 
         for(int t=0; t<testCase; t++){
 
-            N = br.readLine();
+            N = br.readLine().trim();
+            System.out.println(N);
             dp = new int[N.length()];
             Arrays.fill(dp, -1);
 
@@ -70,7 +71,7 @@ public class PI {
         // level 2: Either numbers are increasing or decreasing by 1.
         Boolean progressive = true;
         int diff = M.charAt(1) - M.charAt(0);
-        for(int i=2;i<M.length()-1;i++){
+        for(int i=0;i<M.length()-1;i++){
             if(diff != M.charAt(i+1) - M.charAt(i)){
                 progressive = false;
                 break;
