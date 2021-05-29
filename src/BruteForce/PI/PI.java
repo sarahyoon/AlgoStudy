@@ -1,8 +1,6 @@
 package BruteForce.PI;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Arrays;
 
 public class PI {
@@ -13,6 +11,7 @@ public class PI {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int testCase = Integer.parseInt(br.readLine().trim());
 
@@ -22,8 +21,11 @@ public class PI {
             dp = new int[N.length()];
             Arrays.fill(dp, -1);
 
-            System.out.println(memorize(0));
+            bw.flush();
+            bw.write(memorize(0) + "\n");
+
         }
+        bw.close();
     }
 
 
@@ -32,7 +34,6 @@ public class PI {
         if(begin == N.length()){
             return 0;
         }
-
 
         if(dp[begin] != -1){
             return dp[begin];
@@ -54,7 +55,6 @@ public class PI {
 
         String M = N.substring(a, b);
 
-        // level 1: all elements are same.
         Boolean isSame = true;
         for(int i=0;i<M.length();i++){
             if(M.charAt(0) != M.charAt(i)) {
@@ -68,11 +68,10 @@ public class PI {
         }
 
 
-        // level 2: Either numbers are increasing or decreasing by 1.
         Boolean progressive = true;
-        int diff = (M.charAt(1)-'0') - (M.charAt(0)-'0');
+        int diff = (M.charAt(1)) - (M.charAt(0));
         for(int i=2;i<M.length();i++){
-            if(diff != (M.charAt(i)-'0') - (M.charAt(i-1)-'0')){
+            if(diff != (M.charAt(i)) - (M.charAt(i-1))){
                 progressive = false;
                 break;
             }
@@ -81,13 +80,11 @@ public class PI {
         if(progressive && (diff == 1 || diff == -1 )){
             return 2;
         }
-
-        // level 5: Numbers are increasing / decreasing in same diff.
-        if(progressive){
+        else if(progressive){
             return 5;
         }
 
-        // level 4: 2 numbers are alternative
+
         Boolean alternative = true;
         for(int i=0;i<M.length();i++){
             if(M.charAt(i) != M.charAt(i%2)){
@@ -100,7 +97,6 @@ public class PI {
             return 4;
         }
 
-        //or else
         return 10;
     }
 
