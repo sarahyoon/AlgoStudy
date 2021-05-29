@@ -19,7 +19,6 @@ public class PI {
         for(int t=0; t<testCase; t++){
 
             N = br.readLine().trim();
-            System.out.println(N);
             dp = new int[N.length()];
             Arrays.fill(dp, -1);
 
@@ -43,16 +42,17 @@ public class PI {
 
         for(int i = 3;i<=5;i++){
             if(begin+i <= N.length()){
-                ret = dp[begin] = Math.min(ret, memorize(begin+i) + classify(begin, begin+i-1));
+                ret = Math.min(ret, memorize(begin+i) + classify(begin, begin+i));
             }
         }
+        dp[begin] = ret;
 
         return ret;
     }
 
     public static int classify(int a, int b){
 
-        String M = N.substring(a, b+1);
+        String M = N.substring(a, b);
 
         // level 1: all elements are same.
         Boolean isSame = true;
@@ -70,9 +70,9 @@ public class PI {
 
         // level 2: Either numbers are increasing or decreasing by 1.
         Boolean progressive = true;
-        int diff = M.charAt(1) - M.charAt(0);
-        for(int i=0;i<M.length()-1;i++){
-            if(diff != M.charAt(i+1) - M.charAt(i)){
+        int diff = (M.charAt(1)-'0') - (M.charAt(0)-'0');
+        for(int i=2;i<M.length();i++){
+            if(diff != (M.charAt(i)-'0') - (M.charAt(i-1)-'0')){
                 progressive = false;
                 break;
             }
@@ -102,8 +102,6 @@ public class PI {
 
         //or else
         return 10;
-
     }
-
 
 }
