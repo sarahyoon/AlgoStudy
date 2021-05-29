@@ -1,7 +1,9 @@
-package BruteForce;
+package BruteForce.PI;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class PI {
 
@@ -9,15 +11,14 @@ public class PI {
     static String N ;
     static int[] dp;
 
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int testCase = scan.nextInt();
-        scan.nextLine();
+        int testCase = Integer.parseInt(br.readLine());
 
         for(int t=0; t<testCase; t++){
 
-            N = scan.nextLine();
+            N = br.readLine();
             dp = new int[N.length()];
             Arrays.fill(dp, -1);
 
@@ -69,7 +70,7 @@ public class PI {
         // level 2: Either numbers are increasing or decreasing by 1.
         Boolean progressive = true;
         int diff = M.charAt(1) - M.charAt(0);
-        for(int i=0;i<M.length()-1;i++){
+        for(int i=2;i<M.length()-1;i++){
             if(diff != M.charAt(i+1) - M.charAt(i)){
                 progressive = false;
                 break;
