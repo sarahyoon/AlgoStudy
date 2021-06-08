@@ -4,42 +4,32 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class snail {
+    public static int N;
+    public static int M;
+    public static double[][] dp;
 
-    static Double[][] dp;
-    static int days;
-    static int height;
-
-    public static void main(String[] args){
-
+    public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         int testCase = scan.nextInt();
 
-        for(int i=0;i<testCase;i++){
-            height = scan.nextInt();
-            days = scan.nextInt();
+        for(int i=0; i<testCase; i++) {
 
-            dp = new Double[days][height];
-            for(Double[] a: dp){
-                Arrays.fill(a,-1.0);
-            }
-            System.out.println(snail(height, days));
+            N = scan.nextInt(); //우물의 깊이
+            M = scan.nextInt(); //장마 기간의 길이
+            dp = new double[M][2*M]; //항상  0이상의 실수
+            for(double[] k : dp)
+                Arrays.fill(k, -1);
+            System.out.println(solve(0, 0));
         }
-
     }
 
-    public static Double snail(int h, int d){
+    private static double solve(int days, int climbed) {
+        if(days == M)
+            return climbed >= N ? 1 : 0;
 
-        if(d == days){
-            if(h>=height){
-                return 1.0;
-            }
-            return 0.0;
-        }
+        if(dp[days][climbed] != -1)
+            return dp[days][climbed];
 
-        if(dp[d][h] != -1.0){
-            return dp[d][h];
-        }
-        return dp[d][h] = (snail(h+2, d+1) * 0.75) + (snail(h+1, d+1) * 0.25);
-
+        return dp[days][climbed] = 0.75 * solve(days+1, climbed+2) + 0.25 * solve(days+1, climbed+1);
     }
 }
