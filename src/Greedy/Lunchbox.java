@@ -27,7 +27,7 @@ public class Lunchbox {
              Arrays.sort(lunchbox, new Comparator<int[]>() {
                  @Override
                  public int compare(int[] o1, int[] o2) {
-                     return o2[1]-o2[1];
+                     return o2[1]-o1[1];
                  }
              });
 
@@ -35,8 +35,8 @@ public class Lunchbox {
              int result = 0;
 
              for(int j=0;j<n;j++){
-                 result = Math.max(result, heat+lunchbox[j][0] + lunchbox[j][1]);
                  heat += lunchbox[j][0];
+                 result = Math.max(result, heat+lunchbox[j][1]);
              }
 
              System.out.println(result);
