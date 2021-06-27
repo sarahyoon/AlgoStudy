@@ -1,134 +1,177 @@
 package CombinatorialSearch;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class BoardCover2 {
 
-    public static int T, H, W, R, C,N,block_cnt,Answer;
-    public static int[][] check = new int[10][10];
-    public static char[][] map = new char[11][11];
-    public static char[][][] block = new char[4][11][11];
+    static int blockSize;
+    static int emptyCnt;
+    static int best;
+    static int H, W;
+    static int[][] board;
+    static List<List<int[]>> rotations;
+
+    public static void main(String[] args) {
+
+        Scanner in = new Scanner(System.in);
+        int T = in.nextInt();
+        for(int i=0; i<T; i++) {
+            H = in.nextInt();
+            W = in.nextInt();
+            int R = in.nextInt();
+            int C = in.nextInt();
+
+            board = new int[H][W];
+            int[][] block = new int[R][C];
+            emptyCnt=0;
+            blockSize=0;
 
 
-    public static void setting() {
-        N = 2;
-        block_cnt = 0;
-        for (int i = 0; i < R; i++) {
-            for (int j = 0; j < C; j++) {
-                if (block[0][i][j] != block[2][i][j]) N = 4;
-                if (block[0][i][j] == '#') ++block_cnt;
+            for(int j=0; j<H; j++) {
+                String line;
+                line = in.next();
+                for(int k=0; k < W; k++) {
+                    if (line.charAt(k) == '#') {
+                        board[j][k] = 1;
+                    } else {
+                        board[j][k] = 0;
+                        emptyCnt++;
+                    }
+                }
             }
-        }
 
-        for (int i = H-1; i >= 0; i--) {
-            for (int j = W-1; j >= 0; j--) {
-                if (i == H-1 && j == W-1) {
-                    check[i][j] = (map[i][j] == '.') ? 1 : 0;
-                }
-                else if (j == W-1) {
-                    check[i][j] = check[i + 1][0] + ((map[i][j] == '.') ? 1 : 0);
-                }
-                else {
-                    check[i][j] = check[i][j + 1] + ((map[i][j] == '.') ? 1 : 0);
+            for(int j=0; j<R; j++) {
+                String line;
+                line = in.next();
+                for(int k=0; k < C; k++) {
+                    if (line.charAt(k) == '#') {
+                        block[j][k] = 1;
+                        blockSize++;
+                    }else {
+                        block[j][k] = 0;
+                    }
                 }
             }
+            best=0;
+            generateRotations(block);
+            search(0);
+            System.out.println(best);
         }
-
+        in.close();
     }
 
-    public static void rotate(int src, int des, int r, int c) {
-        for (int i = 0; i < r; i++)
-            for (int j = 0; j < c; j++)
-                block[des][j][r - i - 1] = block[src][i][j];
+    static int[][] rotate(int[][] block) {
+        int row = block.length;
+        int col = block[0].length;
+        int[][] ret = new int[col][row];
+
+        for(int i=0; i<row; i++) {
+            for(int j=0; j<col; j++) {
+                ret[j][row-i-1] = block[i][j];
+            }
+        }
+        return ret;
     }
 
+    static void generateRotations(int[][] block) {
 
-    public static void backtracking(int x, int y, int s) {
-        if (y == W) { backtracking(x + 1, 0, s); return; }
-        if (x == H - 1 && y == W - 1) {
-            Answer = s;
+        rotations = new ArrayList<>();
+        for(int i=0; i<4; i++) {
+            List<int[]> rotation = new ArrayList<>();
+            int originX = -1;
+            int originY = -1;
+            for(int j=0; j<block.length; j++) {
+                for(int k=0; k<block[0].length; k++){
+                    if(block[j][k] == 1) {
+                        if(originY == -1) {
+                            originY = j;
+                            originX = k;
+                        }
+                        rotation.add(new int[] {j - originY, k - originX});
+
+                    }
+                }
+            }
+
+            boolean dup = true;
+            for(List<int[]> check_list : rotations) {
+                dup = true;
+                for (int j = 0; j < check_list.size(); j++) {
+                    dup &= (check_list.get(j)[0] == rotation.get(j)[0]) && (check_list.get(j)[1] == rotation.get(j)[1]);
+                }
+                if (dup) {
+                    break;
+                }
+            }
+            if (!dup || rotations.isEmpty()) {
+                rotations.add(rotation);
+            }
+
+            block = rotate(block);
+
+        }
+    }
+
+    static void search(int placed) {
+
+        if(placed + (emptyCnt / blockSize) <= best) return; //가지치기
+
+        int x = -1, y = -1;
+        for(int i=0; i<board.length; i++) {
+            for(int j=0; j<board[0].length; j++) {
+                if(board[i][j] == 0) {
+                    x = j;
+                    y = i;
+                    break;
+                }
+            }
+            if(y != -1) break;
+        }
+
+        if(y == -1) {
+            best = Math.max(best, placed);
             return;
         }
-        if (s + check[x][y] / block_cnt <= Answer) return;
-        for (int n = 0; n < N; n++) {
-            int r, c;
-            if (n % 2 == 1) { r = C; c = R; }
-            else { r = R; c = C; }
-            if (x + r > H || y + c > W) continue;
 
-            boolean flag = true;
-
-            for (int i = 0; i < r && flag; i++) {
-                for (int j = 0; j < c; j++) {
-                    if (block[n][i][j] == '#' && map[x + i][y + j] == '#') {
-                        flag = false;
-                        break;
-                    }
-                }
+        for(int i=0; i<rotations.size(); i++) {
+            if(set(rotations.get(i), x, y, 1)) {
+                emptyCnt -=blockSize;
+                search(placed + 1);
+                emptyCnt +=blockSize;
             }
-            if (!flag) continue;
-            for (int i = 0; i < r; i++) {
-                for (int j = 0; j < c; j++) {
-                    if (block[n][i][j] == '#') {
-                        map[x + i][y + j] = '#';
-                    }
-                }
-            }
-            backtracking(x, y + 1, s + 1);
-            for (int i = 0; i < r; i++) {
-                for (int j = 0; j < c; j++) {
-                    if (block[n][i][j] == '#') {
-                        map[x + i][y + j] = '.';
-                    }
-                }
-            }
-        }
-        backtracking(x, y + 1, s);
-    }
-
-
-
-    public static void main (String[] args) {
-
-        Scanner sc = new Scanner(System.in);
-        int test_case;
-        int c = sc.nextInt();
-        String str = new String();
-
-        for(test_case = 1 ;test_case <=c ;test_case ++)
-        {
-            H = sc.nextInt();
-            W = sc.nextInt();
-            R = sc.nextInt();
-            C = sc.nextInt();
-            sc.nextLine();
-
-            for(int i = 0;i<H;i++)
-            {
-                str= sc.nextLine();
-                for(int j=0;j<W;j++)
-                {
-                    map[i][j]=str.charAt(j);
-                }
-            }
-
-            for(int i = 0;i<R;i++)
-            {
-                str= sc.nextLine();
-                for(int j=0;j<C;j++)
-                {
-                    block[0][i][j]=str.charAt(j);
-                }
-            }
-
-            rotate(0, 1, R, C);
-            rotate(1, 2, C, R);
-            rotate(2, 3, R, C);
-            setting();
-            Answer = 0;
-            backtracking(0,0,0);
-            System.out.println(Answer);
+            set(rotations.get(i), x, y, -1);
         }
 
+        board[y][x] = 1;
+        emptyCnt -= 1;
+        search(placed);
+        emptyCnt += 1;
+        board[y][x] = 0;
     }
+
+    static boolean set(List<int[]> block, int x, int y, int delta) {
+
+        boolean ok = true;
+
+        for(int i=0; i <block.size(); i++) {
+
+            int nx = x + block.get(i)[1];
+            int ny = y + block.get(i)[0];
+
+            if(ny < 0 || ny >= H || nx < 0 || nx >= W) {
+                ok = false;
+            }
+            else{
+                board[ny][nx] += delta;
+                if(board[ny][nx] > 1)
+                    ok = false;
+            }
+
+        }
+
+        return ok;
+    }
+
 }
