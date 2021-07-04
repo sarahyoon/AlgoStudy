@@ -8,24 +8,25 @@ public class Arctic {
     public static int[] check;
     public static int C,N;
 
-    public static void decision(double[][] temp, int i, double gap)
+    public static void decision(double[][] dist, int i, double gap)
     {
         double a;
         double b;
 
-        for(int j = 1; j < temp.length; j++)
+        for(int j = 1; j < dist.length; j++)
         {
             if(i == j) continue;
 
-            a = temp[i][0] - temp[j][0];
-            b = temp[i][1] - temp[j][1];
+            a = dist[i][0] - dist[j][0];
+            b = dist[i][1] - dist[j][1];
 
             if( Math.sqrt( (a * a) + (b * b) ) <= gap )
             {
                 if(check[j] == 0)
                 {
                     check[j] = 1;
-                    decision(temp, j, gap);
+                    decision(dist, j, gap);
+                    decision(dist, j, gap);
                 }
             }
         }
@@ -33,7 +34,7 @@ public class Arctic {
 
     }
 
-    public static double optimize(double[][] temp, double low, double high)
+    public static double optimize(double[][] dist, double low, double high)
     {
         double mid;
         int k;
@@ -42,7 +43,7 @@ public class Arctic {
         {
             Arrays.fill(check, 0);
             mid = ( low + high) / 2;
-            decision(temp, 0, mid);
+            decision(dist, 0, mid);
             for(k = 1; k < N; k++)
             {
                 if(check[k] != 1) break;
@@ -59,21 +60,21 @@ public class Arctic {
         Scanner sc = new Scanner(System.in);
 
         C = sc.nextInt();
-        double[][] temp;
+        double[][] dist;
 
         for(int i = 0; i < C; i++)
         {
             N = sc.nextInt();
-            temp = new double[N][2];
+            dist = new double[N][2];
             check = new int[N];
 
             for(int j = 0; j < N; j++)
             {
-                temp[j][0] = sc.nextDouble();
-                temp[j][1] = sc.nextDouble();
+                dist[j][0] = sc.nextDouble();
+                dist[j][1] = sc.nextDouble();
             }
 
-            System.out.printf("%.2f\n", optimize(temp, 0, 1000*Math.sqrt(2) + 10));
+            System.out.printf("%.2f\n", optimize(dist, 0, 1000*Math.sqrt(2) + 10));
         }
     }
 
