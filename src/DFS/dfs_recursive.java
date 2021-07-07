@@ -32,7 +32,6 @@ public class dfs_recursive {
         for (int i = 1; i <= n; i++) {
             Collections.sort(adjList[i]);
         }
-
         dfs(v, adjList, visited);
     }
 
