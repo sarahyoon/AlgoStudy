@@ -42,6 +42,7 @@ public class dfs_recursive {
             System.out.print(start + " ");
 
             Iterator<Integer> iter = adjList[start].listIterator();
+
             while(iter.hasNext()){
                 int w = iter.next();
                 if(!visited[w]) {
