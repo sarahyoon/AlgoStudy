@@ -13,7 +13,6 @@ public class Josephus {
         Scanner scan = new Scanner(System.in);
 
         int testCase = scan.nextInt();
-        String answer = "";
 
         for(int i=0;i<testCase;i++){
 
@@ -25,21 +24,16 @@ public class Josephus {
                 list.add(idx);
             }
 
-            int cur = 0;
-
-            list.remove(0);
-            cur = cur+k-1;
-            josephus(cur);
-
+            josephus(0);
 
             if(list.get(0)<list.get(1)){
-                answer += list.get(0) + " " + list.get(1) + "\n";
+                System.out.println(list.get(0) + " "+ list.get(1));
             }
             else{
-                answer  += list.get(1) + " " + list.get(0) + "\n";
+                System.out.println(list.get(1) + " "+ list.get(0));
             }
+
         }
-        System.out.print(answer);
     }
 
     public static void josephus(int cur){
@@ -48,16 +42,10 @@ public class Josephus {
             return;
         }
 
-        //remove
         list.remove(cur);
 
-        if(cur+k-1>=list.size()){
-            cur= (k-(list.size()-1-cur)-1)-1;
-        }else{
-            cur = cur+k-1;
-        }
+        cur = (cur + k - 1) % list.size();
 
         josephus(cur);
-
     }
 }
